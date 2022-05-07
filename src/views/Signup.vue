@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import account from "../../api/account";
 export default {
   name: 'Signup',
   data () {
@@ -32,12 +33,7 @@ export default {
       this.$router.replace('/signin')
     },
     signup () {
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: this.email, password: this.password, password_confirmation: this.password_confirmation })
-      };
-      fetch("http://127.0.0.1:3000/signup", requestOptions)
+      account.signup(this.email, this.password, this.password_confirmation)
           .then(response => this.signupSuccessful(response))
           .catch(error => this.signupFailed(error))
     },

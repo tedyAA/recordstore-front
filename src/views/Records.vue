@@ -103,7 +103,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import records from "../../api/records";
+import artists from "../../api/artists";
 
 export default {
   name: 'Records',
@@ -117,24 +118,15 @@ export default {
     }
   },
   created() {
-    axios({
-      method: 'GET',
-      url: "http://127.0.0.1:3000/api/v1/records",
-      headers: {Authorization: `Bearer ${this.$store.state.jwt}`}
-    })
+    records.getRecords(this.$store.state.jwt)
         .then(response => response.json())
         .then(response => {
-          console.log(response)
           this.artists.push(response.data)
           this.newArtist = ''
         })
         .catch(error => this.setError(error, 'Cannot create artist'))
 
-    axios({
-      method: 'GET',
-      url: "http://127.0.0.1:3000/api/v1/artists",
-      headers: {Authorization: `Bearer ${this.$store.state.jwt}`}
-    })
+    artists.getArtists(this.$store.state.jwt)
         .then(response => {
           console.log(response)
           this.artists = response.data
@@ -160,18 +152,7 @@ export default {
       if (!value) {
         return
       }
-      axios({
-        method: 'POST',
-        url: "http://127.0.0.1:3000/api/v1/records",
-        headers: {Authorization: `Bearer ${this.$store.state.jwt}`},
-        data: {
-          record: {
-            title: this.newRecord.title,
-            year: this.newRecord.year,
-            artist_id: this.newRecord.artist
-          }
-        }
-      })
+      records.addRecord(this.newRecord.title, this.newRecord.year, this.newRecord.artist, this.$store.state.jwt)
           .then(response => {
             this.records.push(response.data)
             this.newRecord = ''
@@ -179,18 +160,7 @@ export default {
           .catch(error => this.setError(error, 'Cannot create record'))
     },
     removeRecord(record) {
-      axios({
-        method: 'DELETE',
-        url: `http://127.0.0.1:3000/api/v1/records/${record.id}`,
-        headers: {Authorization: `Bearer ${this.$store.state.jwt}`},
-        data: {
-          record: {
-            title: this.newRecord.title,
-            year: this.newRecord.year,
-            artist_id: this.newRecord.artist
-          }
-        }
-      })
+      records.removeRecord(this.newRecord.title, this.newRecord.year,this.newRecord.artist, record.id, this.$store.state.jwt)
           .then((response) => {
             console.log(response)
             this.records.splice(this.records.indexOf(record), 1)
@@ -203,18 +173,8 @@ export default {
     },
     updateRecord(record) {
       this.editedRecord = ''
-      axios({
-        method: 'PATCH',
-        url: `http://127.0.0.1:3000/api/v1/records/${record.id}`,
-        headers: {Authorization: `Bearer ${this.$store.state.jwt}`},
-        data: {
-          record: {
-            title: record.title,
-            year: record.year,
-            artist_id: record.artist
-          }
-        }
-      }).catch(error => this.setError(error, 'Cannot update record'))
+     records.updateRecord(this.newRecord.title, this.newRecord.year,this.newRecord.artist, record.id, this.$store.state.jwt)
+          .catch(error => this.setError(error, 'Cannot update record'))
     }
   }
 }

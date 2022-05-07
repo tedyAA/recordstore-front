@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import axios from "axios";
-
+import account from "../../api/account";
 export default {
   name: 'Signin',
   data() {
@@ -32,14 +31,7 @@ export default {
       this.$router.replace('/signup')
     },
     signin() {
-      axios({
-        method: 'post',
-        url: 'http://127.0.0.1:3000/signin',
-        data: {
-          email: this.email,
-          password: this.password
-        }
-      })
+     account.signin(this.email, this.password)
           .then(response => this.signinSuccessful(response))
           .catch(error => this.signinFailed(error))
     },

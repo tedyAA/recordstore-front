@@ -53,8 +53,7 @@
 </template>
 
 <script>
-
-import axios from "axios";
+import artists from "../../api/artists";
 
 export default {
   name: 'Artists',
@@ -66,21 +65,14 @@ export default {
       editedArtist: ''
     }
   },
-  // created() {
-  //   if (!this.$store.state.signedIn) {
-  //     this.$router.replace('/')
-  //   } else {
-  //     const requestOptions = {
-  //       method: "GET"
-  //     };
-  //     fetch("http://127.0.0.1:3000/api/v1/artists", requestOptions)
-  //         .then(response => response.json())
-  //         .then(response => {
-  //           this.artists = response.data
-  //         })
-  //         .catch(error => this.setError(error, 'fsdfsdf'))
-  //   }
-  // },
+  created() {
+    if (!this.$store.state.signedIn) {
+      this.$router.replace('/')
+    } else {
+      artists.getArtists(this.$store.state.jwt)
+          .catch(error => this.setError(error, 'Could not get artists'))
+    }
+  },
   methods: {
     setError(error, text) {
       this.error = (error.response && error.response.data && error.response.data.error) || text
@@ -90,14 +82,7 @@ export default {
       if (!value) {
         return
       }
-      axios({
-        method: 'post',
-        url: 'http://127.0.0.1:3000/api/v1/artists',
-        headers: { Authorization: `Bearer ${this.$store.state.jwt}` },
-       data:{
-         artist:{name: this.newArtist}
-       }
-      })
+      artists.addArtist(this.newArtist, this.$store.state.jwt)
           .then(response => response.json())
           .then(response => {
             this.artists.push(response.data)
@@ -106,7 +91,7 @@ export default {
           .catch(error => this.setError(error, 'Cannot create artist'))
     },
     removeArtist(artist) {
-      this.$http.secured.delete(`/api/v1/artists/${artist.id}`)
+      artists.removeArtist(artist.id, this.$store.state.jwt)
           .then(response => {
             console.log(response)
             this.artists.splice(this.artists.indexOf(artist), 1)
@@ -118,7 +103,7 @@ export default {
     },
     updateArtist(artist) {
       this.editedArtist = ''
-      this.$http.secured.patch(`/api/v1/artists/${artist.id}`, {artist: {title: artist.name}})
+      artists.updateArtist(artist.id, artist, name, this.$store.state.jwt)
           .catch(error => this.setError(error, 'Cannot update artist'))
     }
   }
