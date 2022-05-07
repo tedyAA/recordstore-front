@@ -1,14 +1,7 @@
 <template>
   <div>
-    <div class="container p-2">
-      <div class="text-red" v-if="error">{{ error }}</div>
-      <h3 class="font-mono font-regular text-3xl mb-4">Add a new record</h3>
-      <b-button
-          class="button is-primary"
-          label="Launch component modal"
-          type="is-primary"
-          size="is-medium"
-          @click="isComponentModalActive = true">open</b-button>
+    <div>
+     <h1> Your records </h1>
       <ul class="list-reset mt-4">
         <li class="py-4" v-for="record in records" :key="record.id" :record="record">
           <div class="flex items-center justify-between flex-wrap">
@@ -63,6 +56,16 @@
           </div>
         </li>
       </ul>
+      <h1> add record </h1>
+      <b-button
+          class="button is-primary"
+          label="Launch component modal"
+          type="is-primary"
+          size="is-medium"
+          @click="isComponentModalActive = true">open</b-button>
+      <div v-for="record in records" :key="record.id">
+        {{record}}
+      </div>
     </div>
     <AddArtistModal :is-active="isComponentModalActive" @close="closeModal"/>
   </div>
@@ -87,13 +90,13 @@ export default {
       isComponentModalActive: false
     }
   },
-  created() {
+  mounted() {
     records.getRecords(this.$store.state.jwt)
-        .then(response => response.json())
         .then(response => {
-          this.records.push(response.data)
+          console.log(response)
+          this.records = response.data
         })
-        .catch(error => this.setError(error, 'Cannot create artist'))
+        .catch(error => this.setError(error, 'Something went wrong'))
   },
   methods: {
     closeModal(){

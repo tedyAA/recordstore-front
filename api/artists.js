@@ -18,21 +18,4 @@ export default {
             }
         })
     },
-   removeArtist(artist_id, token){
-        return  axios({
-            method: 'delete',
-            url: `/api/v1/artists/${artist_id}`,
-            headers: { Authorization: `Bearer ${token}` },
-        })
-    },
-   updateArtist(artist_id, name, token){
-        return  axios({
-            method: 'patch',
-            url: `/api/v1/artists/${artist_id}`,
-            headers: { Authorization: `Bearer ${token}` },
-            data:{
-                artist: {title: name}
-            }
-        })
-    },
 }

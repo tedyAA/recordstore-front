@@ -19,11 +19,11 @@
 
     <div  :class="{ 'is-active': showNav }" id="navbarBasicExample" class="navbar-menu has-text-left">
       <div class="navbar-start m-0 " v-if="isSignedIn">
-        <b-button class="navbar-item " @click="goTo('artists')">
+        <a class="navbar-item is-clickable" @click="goTo('artists')">
           Artists
-        </b-button>
+        </a>
 
-        <a class="navbar-item" @click="goTo('records')">
+        <a class="navbar-item is-clickable" @click="goTo('records')">
           My Records
         </a>
       </div>
