@@ -2,38 +2,43 @@
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item">
-        <img src="../assets/record.png" width="28" height="28"> Record Store
+        <img src="../assets/record.png" width="28" height="28"> <span class="ml-2">Record Store</span>
       </a>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <a
+          role="button"
+          class="navbar-burger"
+          @click="showNav = !showNav"
+          :class="{ 'is-active': showNav }"
+      >
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
     </div>
 
-    <div id="navbarBasicExample" class="navbar-menu has-text-left">
-      <div class="navbar-start m-0 ">
-        <b-button class="navbar-item " @click="goToSignArtists">
+    <div  :class="{ 'is-active': showNav }" id="navbarBasicExample" class="navbar-menu has-text-left">
+      <div class="navbar-start m-0 " v-if="isSignedIn">
+        <b-button class="navbar-item " @click="goTo('artists')">
           Artists
         </b-button>
 
-        <a class="navbar-item" @click="goToSignRecords">
-          Records
+        <a class="navbar-item" @click="goTo('records')">
+          My Records
         </a>
       </div>
 
       <div class="navbar-end has-text-right mr-0">
         <div class="navbar-item">
-          <div v-if="!this.$store.state.signedIn" class="buttons">
-            <a class="button is-primary" @click="goToSignUp">
+          <div v-if="!isSignedIn" class="buttons">
+            <a class="button is-primary" @click="goTo('signup')">
               <strong>Sign up</strong>
             </a>
-            <a class="button is-light" @click="goToSignIn">
+            <a class="button is-light" @click="goTo('signin')">
               Log in
             </a>
           </div>
-          <b-button class="button is-primary" @click="signOut" v-if="this.$store.state.signedIn">Sign out</b-button>
+          <b-button class="button is-primary" @click="signOut" v-if="isSignedIn">Sign out</b-button>
         </div>
       </div>
     </div>
@@ -45,24 +50,25 @@ import axios from "axios";
 
 export default {
   name: 'Header',
+  data(){
+    return{
+      showNav: false
+    }
+  },
   created () {
     this.signedIn()
   },
+  computed:{
+    isSignedIn(){
+      return this.$store.state.signedIn
+    }
+  },
   methods: {
-    goToSignIn(){
-      this.$router.replace('/signin')
+    goTo(location){
+      this.$router.replace('/' + location)
     },
-    goToSignUp(){
-      this.$router.replace('/signup')
-    },
-    goToSignArtists(){
-      this.$router.replace('/artists')
-    },
-    goToSignRecords(){
-      this.$router.replace('/records')
-    },
-    setError (error, text) {
-      this.error = (error.response && error.response.data && error.response.data.error) || text
+    toast() {
+      this.$buefy.toast.open('Something happened')
     },
     signedIn () {
       return localStorage.signedIn
@@ -80,7 +86,7 @@ export default {
             this.$store.state.signedIn = false
             this.$router.replace('/signin')
           })
-          .catch(error => this.setError(error, 'Cannot sign out'))
+          .catch(error => this.toast(error))
 
     }
   }

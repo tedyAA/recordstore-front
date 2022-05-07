@@ -66,21 +66,21 @@ export default {
       editedArtist: ''
     }
   },
-  created() {
-    if (!this.$store.state.signedIn) {
-      this.$router.replace('/')
-    } else {
-      const requestOptions = {
-        method: "GET"
-      };
-      fetch("http://127.0.0.1:3000/api/v1/artists", requestOptions)
-          .then(response => response.json())
-          .then(response => {
-            this.artists = response.data
-          })
-          .catch(error => this.setError(error, 'fsdfsdf'))
-    }
-  },
+  // created() {
+  //   if (!this.$store.state.signedIn) {
+  //     this.$router.replace('/')
+  //   } else {
+  //     const requestOptions = {
+  //       method: "GET"
+  //     };
+  //     fetch("http://127.0.0.1:3000/api/v1/artists", requestOptions)
+  //         .then(response => response.json())
+  //         .then(response => {
+  //           this.artists = response.data
+  //         })
+  //         .catch(error => this.setError(error, 'fsdfsdf'))
+  //   }
+  // },
   methods: {
     setError(error, text) {
       this.error = (error.response && error.response.data && error.response.data.error) || text
