@@ -13,18 +13,7 @@
           <input class="input is-primary" type="text" placeholder="Enter title" v-model="newRecord.name">
           <label class="label mt-4">Enter year</label>
           <input class="input is-primary" type="text" placeholder="Enter year" v-model="newRecord.year">
-          <b-field label="Select Artist" class="mb-5 mt-5">
-            <b-autocomplete
-                rounded
-                v-model="name"
-                :data="filteredDataArray"
-                placeholder="e.g. jQuery"
-                icon="magnify"
-                clearable
-                @select="option => selected = option">
-              <template #empty>No results found</template>
-            </b-autocomplete>
-          </b-field>
+         <ArtistAutocomplete :artists="artists" @setSelectedArtist="setArtist"/>
           <p class="pt-4">Don't see your artist?
             <router-link to="/artists" class="link-grey">Create one</router-link>
           </p>
@@ -38,17 +27,19 @@
 <script>
 import artists from "../../../api/artists";
 import records from "../../../api/records";
-
+import ArtistAutocomplete from "@/components/artistAutocomplete";
 export default {
   name: "AddArtistModal",
   props: {
     isActive: {type: Boolean, default: true}
   },
+  components:{
+    ArtistAutocomplete
+  },
   data() {
     return {
       newRecord: [],
       artists: [],
-      name: '',
       selected: null
     }
   },
@@ -60,18 +51,10 @@ export default {
         })
         .catch(error => this.setError(error, 'Something went wrong'))
   },
-  computed: {
-    filteredDataArray() {
-      let filteredArtists = []
-      this.artists.forEach(artist =>filteredArtists.push(artist.name) )
-      return filteredArtists.filter((option) => {
-        return option
-            .toString()
-            .toLowerCase()
-      })
-    }
-  },
   methods:{
+    setArtist(value){
+      this.selected = value
+    },
     addRecord() {
       const found = this.artists.find(element => element.name === this.selected);
       console.log(found)

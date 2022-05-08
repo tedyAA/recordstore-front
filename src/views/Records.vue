@@ -1,9 +1,44 @@
 <template>
   <div>
     <div>
-     <h1> Your records </h1>
-      <ul class="list-reset mt-4">
-        <li class="py-4" v-for="record in records" :key="record.id" :record="record">
+      <h1 class="title has-text-weight-semibold"> Your records </h1>
+      <table class="table has-text-left">
+        <thead>
+        <tr>
+          <th>Record Name</th>
+          <th>Record Artist</th>
+          <th>Record Year</th>
+          <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="record in records" :key="record.id" class="has-text-left">
+          <td>
+            <p>
+              <svg viewBox="0 0 24 24" width="24" height="24"><title>record vinyl</title>
+                <path
+                    d="M23.938 10.773a11.915 11.915 0 0 0-2.333-5.944 12.118 12.118 0 0 0-1.12-1.314A11.962 11.962 0 0 0 12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12c0-.414-.021-.823-.062-1.227zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"></path>
+              </svg>
+              {{ record.title }}
+            </p>
+          </td>
+          <td><p class="block font-mono font-semibold">{{ getArtist(record) }}</p></td>
+          <td>{{ record.year }}</td>
+          <td>
+            <button class="button is-primary"
+                    @click="editRecord(record)">Edit
+            </button>
+
+            <button class="button ml-3 is-danger"
+                    @click="removeRecord(record)">Delete
+            </button>
+          </td>
+        </tr>
+
+        </tbody>
+      </table>
+      <ul v-if="false" class="list-reset mt-4">
+        <li class="py-4" v-for="record in records" :key="record.id">
           <div class="flex items-center justify-between flex-wrap">
             <div class="flex-1 flex justify-between flex-wrap pr-4">
               <p class="block flex font-mono font-semibold flex items-center">
@@ -17,55 +52,44 @@
               <p class="block font-mono font-semibold">{{ getArtist(record) }}</p>
             </div>
 
-            <button
-                class="bg-transparent text-sm hover:bg-blue hover:text-white text-blue border border-blue no-underline font-bold py-2 px-4 mr-2 rounded"
-                @click.prevent="editRecord(record)">Edit
+            <button class="button is-primary"
+                    @click="editRecord(record)">Edit
             </button>
 
-            <button
-                class="bg-transparent text-sm hover:bg-red text-red hover:text-white no-underline font-bold py-2 px-4 rounded border border-red"
-                @click.prevent="removeRecord(record)">Delete
+            <button class="button ml-3 is-danger"
+                    @click="removeRecord(record)">Delete
             </button>
           </div>
 
-          <div v-if="record == editedRecord">
-            <form action="" @submit.prevent="updateRecord(record)">
-              <div class="mb-6 p-4 bg-white rounded border border-grey-light mt-4">
+          <div class="record-container" v-if="record === editedRecord">
+            <div class="mb-6 p-4 bg-white rounded border border-grey-light mt-4">
 
-                <div class="mb-6">
-                  <label class="label">Title</label>
-                  <input class="input" v-model="record.title">
-                </div>
-
-                <div class="mb-6">
-                  <label class="label">Year</label>
-                  <input class="input" v-model="record.year">
-                </div>
-
-                <div class="mb-6">
-                  <select id="artist_update" class="select" v-model="record.artist">
-                    <option disabled value="">Select an artist</option>
-                    <option :value="artist.id" v-for="artist in artists" :key="artist.id">{{ artist.name }}</option>
-                  </select>
-                </div>
-
-                <input type="submit" value="Update"
-                       class="bg-transparent text-sm hover:bg-blue hover:text-white text-blue border border-blue no-underline font-bold py-2 px-4 mr-2 rounded">
+              <div class="mb-6">
+                <label class="label">Title</label>
+                <input class="input" v-model="record.title">
               </div>
-            </form>
+
+              <div class="mb-6">
+                <label class="label">Year</label>
+                <input class="input" v-model="record.year">
+              </div>
+
+              <div class="mb-6">
+                <ArtistAutocomplete :artists="artists" @setSelectedArtist="setArtist"/>
+              </div>
+              <b-button class="button is-primary" @click="updateRecord(record)">Update</b-button>
+            </div>
           </div>
         </li>
       </ul>
-      <h1> add record </h1>
+      <h1 class="title has-text-weight-semibold"> Add new record </h1>
       <b-button
           class="button is-primary"
-          label="Launch component modal"
+          label="Add record"
           type="is-primary"
           size="is-medium"
-          @click="isComponentModalActive = true">open</b-button>
-      <div v-for="record in records" :key="record.id">
-        {{record}}
-      </div>
+          @click="isComponentModalActive = true">open
+      </b-button>
     </div>
     <AddArtistModal :is-active="isComponentModalActive" @close="closeModal"/>
   </div>
@@ -73,12 +97,15 @@
 
 <script>
 import records from "../../api/records";
+import artists from "../../api/artists";
 import AddArtistModal from "@/components/modals/AddRecordModal";
+import ArtistAutocomplete from "@/components/artistAutocomplete";
 
 export default {
   name: 'Records',
   components: {
-    AddArtistModal
+    AddArtistModal,
+    ArtistAutocomplete
   },
   data() {
     return {
@@ -87,19 +114,39 @@ export default {
       newRecord: [],
       error: '',
       editedRecord: '',
-      isComponentModalActive: false
+      isComponentModalActive: false,
+      selectedArtist: ''
     }
   },
-  mounted() {
+  computed: {
+    filteredDataArray() {
+      let filteredArtists = []
+      this.artists.forEach(artist => filteredArtists.push(artist.name))
+      return filteredArtists.filter((option) => {
+        return option
+            .toString()
+            .toLowerCase()
+      })
+    }
+  },
+  created() {
     records.getRecords(this.$store.state.jwt)
         .then(response => {
-          console.log(response)
           this.records = response.data
+        })
+        .catch(error => this.setError(error, 'Something went wrong'))
+
+    artists.getArtists(this.$store.state.jwt)
+        .then(response => {
+          this.artists = response.data
         })
         .catch(error => this.setError(error, 'Something went wrong'))
   },
   methods: {
-    closeModal(){
+    setArtist(value) {
+      this.selectedArtist = value
+    },
+    closeModal() {
       this.isComponentModalActive = false
     },
     setError(error, text) {
@@ -136,8 +183,12 @@ export default {
 }
 </script>
 <style>
-.container {
+.record-container {
+  margin: auto;
   width: 30%;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.table{
+  margin: auto;
 }
 </style>
