@@ -113,7 +113,6 @@
           </div>
         </li>
       </ul>
-      <h1 class="title has-text-weight-semibold"> Add new record </h1>
       <b-button
           class="button is-primary"
           label="Add record"

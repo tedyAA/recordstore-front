@@ -1,13 +1,13 @@
 <template>
   <div class="artists-container p-3">
-    <h3 class="mt-4 mb-4">Add a new artist</h3>
-    <input class="input mb-3" v-model="newArtist" type="text" placeholder="Enter email">
+    <h1 class="title has-text-weight-semibold">Add a new artist</h1>
+    <input class="input mb-3" v-model="newArtist" type="text" placeholder="Enter artist name">
     <b-button @click="addArtist" class="button is-primary mt-5">Add artist</b-button>
 
     <hr/>
 
     <ul class="list-reset mt-4">
-      <li class="py-4" v-for="artist in artists" :key="artist.id">
+      <li class="py-4 has-text-left" v-for="artist in artists" :key="artist.id">
         <div class="is-inline-flex">
           <div class="has-text-left mr-5">
             <p>
