@@ -33,6 +33,37 @@
                     @click="removeRecord(record)">Delete
             </button>
           </td>
+          <div class="record-container" >
+            <b-modal
+                :active="record === editedRecord"
+                has-modal-card
+                tabindex=""
+                class="has-no-button-close"
+                @close="$emit('close')"
+            >
+              <div class="modal-card">
+                <div class="card">
+                  <div class="card-content">
+
+                    <div class="mb-6">
+                      <label class="label">Title</label>
+                      <input class="input" v-model="record.title">
+                    </div>
+
+                    <div class="mb-6">
+                      <label class="label">Year</label>
+                      <input class="input" v-model="record.year">
+                    </div>
+
+                    <div class="mb-6">
+                      <ArtistAutocomplete :artists="artists" @setSelectedArtist="setArtist"/>
+                    </div>
+                    <b-button class="button is-primary" @click="updateRecord(record)">Update</b-button>
+                  </div>
+                </div>
+              </div>
+            </b-modal>
+          </div>
         </tr>
 
         </tbody>
@@ -188,7 +219,8 @@ export default {
   width: 30%;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
-.table{
+
+.table {
   margin: auto;
 }
 </style>
