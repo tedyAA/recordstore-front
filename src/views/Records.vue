@@ -194,7 +194,7 @@ export default {
       return artist
     },
     removeRecord(record) {
-      records.removeRecord(this.newRecord.title, this.newRecord.year, this.newRecord.artist, record.id, this.$store.state.jwt)
+      records.removeRecord(record.title, record.year, record.artist, record.id, this.$store.state.jwt)
           .then((response) => {
             console.log(response)
             this.records.splice(this.records.indexOf(record), 1)
@@ -207,8 +207,10 @@ export default {
     },
     updateRecord(record) {
       this.editedRecord = ''
-      records.updateRecord(this.newRecord.title, this.newRecord.year, this.newRecord.artist, record.id, this.$store.state.jwt)
+      const found = this.artists.find(element => element.name === this.selectedArtist);
+      records.updateRecord(record.title, record.year, found.id, record.id, this.$store.state.jwt)
           .catch(error => this.setError(error, 'Cannot update record'))
+      this.selectedArtist = ''
     }
   }
 }
