@@ -4,10 +4,16 @@ import Artists from "@/views/Artists";
 import Records from "@/views/Records";
 import Signin from "@/views/Signin";
 import Signup from "@/views/Signup";
+import Admin from "@/views/Admin";
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin
+  },
   {
     path: '/artists',
     name: 'Artists',

@@ -45,6 +45,9 @@ export default {
     }
   },
   created() {
+    if(this.$store.state.isAdmin){
+      this.$router.replace('/admin')
+    }
     if (!this.$store.state.signedIn) {
       this.$router.replace('/')
     } else {

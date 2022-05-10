@@ -19,12 +19,16 @@
 
     <div  :class="{ 'is-active': showNav }" id="navbarBasicExample" class="navbar-menu has-text-left">
       <div class="navbar-start m-0 " v-if="isSignedIn">
-        <a class="navbar-item is-clickable" @click="goTo('artists')">
+        <a v-if="!this.$store.state.isAdmin" class="navbar-item is-clickable" @click="goTo('artists')">
           Artists
         </a>
 
-        <a class="navbar-item is-clickable" @click="goTo('records')">
+        <a v-if="!this.$store.state.isAdmin" class="navbar-item is-clickable" @click="goTo('records')">
           My Records
+        </a>
+
+        <a class="navbar-item is-clickable" @click="goTo('admin')">
+          My Admin
         </a>
       </div>
 

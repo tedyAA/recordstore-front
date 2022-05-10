@@ -11,6 +11,7 @@
 
 <script>
 import account from "../../api/account";
+import admin from "../../api/admin";
 export default {
   name: 'Signin',
   data() {
@@ -49,7 +50,16 @@ export default {
           .then(response => this.signinSuccessful(response))
           .catch(error => this.signinFailed(error))
     },
+    isAdmin(){
+      let res = ''
+      admin.getAdminInfo(this.$store.state.jwt)
+          .then(response => res = response)
+      if(res !== 'Access denied'){
+        this.$store.state.isAdmin = true
+      }
+    },
     signinSuccessful(response) {
+      this.isAdmin()
       if (!response.data.data.csrf) {
         this.signinFailed(response)
         return
@@ -63,7 +73,11 @@ export default {
         message: 'Signed in successfully',
         type: 'is-success'
       })
-      this.$router.replace('/records')
+      if(this.$store.state.isAdmin){
+        this.$router.replace('/admin')
+      }else{
+        this.$router.replace('/records')
+      }
     },
     signinFailed(error) {
       this.error = (error.response && error.response && error.response.error) || ''

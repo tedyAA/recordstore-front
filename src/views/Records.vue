@@ -160,6 +160,9 @@ export default {
     }
   },
   created() {
+    if(this.$store.state.isAdmin){
+      this.$router.replace('/admin')
+    }
     records.getRecords(this.$store.state.jwt)
         .then(response => {
           this.records = response.data

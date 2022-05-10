@@ -9,7 +9,8 @@ export default new Vuex.Store({
   state: {
     jwt: '',
     csrf: '',
-    signedIn: false
+    signedIn: false,
+    isAdmin: false
   },
   mutations: {
   },
