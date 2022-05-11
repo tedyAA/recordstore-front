@@ -51,15 +51,10 @@ export default {
           .catch(error => this.signinFailed(error))
     },
     isAdmin(){
-      let res = ''
       admin.getAdminInfo(this.$store.state.jwt)
-          .then(response => res = response)
-      if(res !== 'Access denied'){
-        this.$store.state.isAdmin = true
-      }
+          .then(response => this.$store.state.isAdmin = response.data.isAdmin)
     },
     signinSuccessful(response) {
-      this.isAdmin()
       if (!response.data.data.csrf) {
         this.signinFailed(response)
         return
@@ -73,9 +68,10 @@ export default {
         message: 'Signed in successfully',
         type: 'is-success'
       })
+      this.isAdmin()
       if(this.$store.state.isAdmin){
         this.$router.replace('/admin')
-      }else{
+      }else if(!this.$store.state.isAdmin){
         this.$router.replace('/records')
       }
     },
@@ -90,7 +86,7 @@ export default {
       this.$store.state.signedIn = false
     },
     checkSignedIn() {
-      if (localStorage.signedIn) {
+      if (this.$store.state.signedIn) {
         this.$router.replace('/records')
       }
     }

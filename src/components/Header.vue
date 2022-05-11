@@ -27,7 +27,7 @@
           My Records
         </a>
 
-        <a class="navbar-item is-clickable" @click="goTo('admin')">
+        <a v-if="this.$store.state.isAdmin" class="navbar-item is-clickable" @click="goTo('admin')">
           My Admin
         </a>
       </div>

@@ -52,11 +52,16 @@ export default {
       this.$router.replace('/')
     } else {
       artists.getArtists(this.$store.state.jwt)
-          .then(response => this.artists = response.data)
+          .then(response => this.setArtists(response.data))
           .catch(error => this.setError(error, 'Could not get artists'))
     }
   },
   methods: {
+    setArtists(artists){
+      const result = artists.filter(artist => artist.approved === true);
+      this.artists = result
+      console.log(result)
+    },
     setError(error, text) {
       this.error = (error.response && error.response.data && error.response.data.error) || text
     },

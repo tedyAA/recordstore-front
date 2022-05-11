@@ -5,10 +5,16 @@ import Records from "@/views/Records";
 import Signin from "@/views/Signin";
 import Signup from "@/views/Signup";
 import Admin from "@/views/Admin";
+import Welcome from "@/views/Welcome";
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/',
+    name: 'Welcome',
+    component: Welcome
+  },
   {
     path: '/admin',
     name: 'Admin',

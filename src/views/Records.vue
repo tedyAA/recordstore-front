@@ -148,20 +148,12 @@ export default {
       selectedArtist: ''
     }
   },
-  computed: {
-    filteredDataArray() {
-      let filteredArtists = []
-      this.artists.forEach(artist => filteredArtists.push(artist.name))
-      return filteredArtists.filter((option) => {
-        return option
-            .toString()
-            .toLowerCase()
-      })
-    }
-  },
   created() {
     if(this.$store.state.isAdmin){
       this.$router.replace('/admin')
+    }
+    if(!this.$store.state.signedIn){
+      this.$router.replace('/')
     }
     records.getRecords(this.$store.state.jwt)
         .then(response => {
@@ -171,11 +163,16 @@ export default {
 
     artists.getArtists(this.$store.state.jwt)
         .then(response => {
-          this.artists = response.data
+          this.setArtists(response.data)
         })
         .catch(error => this.setError(error, 'Something went wrong'))
   },
   methods: {
+    setArtists(artists){
+      const result = artists.filter(artist => artist.approved === true);
+      this.artists = result
+      console.log(result)
+    },
     setArtist(value) {
       this.selectedArtist = value
     },

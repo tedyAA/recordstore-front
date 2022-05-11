@@ -47,11 +47,16 @@ export default {
     artists.getArtists(this.$store.state.jwt)
         .then(response => {
           console.log(response)
-          this.artists = response.data
+          this.setArtists(response.data)
         })
         .catch(error => this.setError(error, 'Something went wrong'))
   },
   methods:{
+    setArtists(artists){
+      const result = artists.filter(artist => artist.approved === true);
+      this.artists = result
+      console.log(result)
+    },
     setArtist(value){
       this.selected = value
     },
