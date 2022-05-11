@@ -45,4 +45,21 @@ export default {
             }
         })
     },
+    deleteUser(user_id, token){
+        return  axios({
+            method: 'Delete',
+            url: `http://127.0.0.1:3000/api/v1/users/${user_id}`,
+            headers: { Authorization: `Bearer ${token}` }
+        })
+    },
+    updateUser(user_id, email, token){
+        return  axios({
+            method: 'Put',
+            url: `http://127.0.0.1:3000/api/v1/users/${user_id}`,
+            headers: { Authorization: `Bearer ${token}` },
+            data:{
+                email: email
+            }
+        })
+    },
 }

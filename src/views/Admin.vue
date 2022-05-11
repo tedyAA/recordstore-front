@@ -22,10 +22,10 @@
             <td>{{ user.id }}</td>
             <td>{{ user.email }}</td>
             <td>
-              <b-button class="button is-primary">Edit</b-button>
+              <b-button class="button is-primary" @click="openModalEditUser(user)">Edit</b-button>
             </td>
             <td>
-              <b-button class="button is-danger">Delete</b-button>
+              <b-button class="button is-danger" @click="deleteUser(user)">Delete</b-button>
             </td>
           </tr>
 
@@ -104,6 +104,26 @@
         </div>
       </div>
     </b-modal>
+    <b-modal
+        :active="modalEditUserActive"
+        has-modal-card
+        tabindex=""
+        class="has-no-button-close"
+        @close="closeModalEditUser"
+    >
+      <div class="modal-card">
+        <div class="card">
+          <div class="card-content">
+
+            <div class="mb-6">
+              <label class="label">Email</label>
+              <input class="input" v-model="editedUser.email">
+            </div>
+            <b-button class="button is-primary" @click="updateUser(editedUser)">Update</b-button>
+          </div>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -117,7 +137,8 @@ export default {
       adminResponse: '',
       newArtist: '',
       editedArtist: '',
-      modalEditArtistActive: false,
+      editedUser:'',
+      modalEditUserActive: false,
       users: [],
       artists: [],
       approvedArtists: [],
@@ -158,6 +179,13 @@ export default {
     closeModalEditArtist() {
       this.modalEditArtistActive = false
     },
+    closeModalEditUser() {
+      this.modalEditUserActive = false
+    },
+    openModalEditUser(user) {
+      this.editedUser = user
+      this.modalEditUserActive = true
+    },
     openModalEditArtist(artist) {
       this.editedArtist = artist
       this.modalEditArtistActive = true
@@ -191,10 +219,27 @@ export default {
           .catch(error => this.setError(error, 'Something went wrong'))
     },
     approveArtist(artist, approved) {
-      console.log(artist.id)
       admin.approveArtist(approved, artist.id, this.$store.state.jwt)
           .then(this.$buefy.toast.open({
             message: 'Artist created successfully!',
+            type: 'is-success'
+          }))
+          .then(this.getInfo())
+          .catch(error => this.setError(error, 'Something went wrong'))
+    },
+    deleteUser(user) {
+      admin.deleteUser(user.id, this.$store.state.jwt)
+          .then(this.$buefy.toast.open({
+            message: 'User deleted successfully!',
+            type: 'is-success'
+          }))
+          .then(this.getInfo())
+          .catch(error => this.setError(error, 'Something went wrong'))
+    },
+    updateUser(user) {
+      admin.updateUser(user.id, user.email, this.$store.state.jwt)
+          .then(this.$buefy.toast.open({
+            message: 'User updated successfully!',
             type: 'is-success'
           }))
           .then(this.getInfo())
