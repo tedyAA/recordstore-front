@@ -86,7 +86,7 @@ export default {
       delete localStorage.signedIn
     },
     checkedSignedIn () {
-      if (localStorage.signedIn) {
+      if (this.$store.state.signedIn) {
         this.$router.replace('/records')
       }
     }
